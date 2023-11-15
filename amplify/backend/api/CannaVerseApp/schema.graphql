@@ -1,0 +1,197 @@
+enum HobbyName {
+  SPORTS
+  TELEVISION
+  OUTDOORS
+  GYMFITNESS
+  GAMING
+  ART
+  COOKING
+  CRAFTING
+  WRITINGREADING
+  MUSIC
+}
+
+type Hobbies @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  name: HobbyName
+  usersID: ID! @index(name: "byUsers")
+  Users: [Users] @manyToMany(relationName: "HobbiesUsers")
+}
+
+enum SwipsDirection {
+  LIKE
+  DISLIKE
+}
+
+enum ListingType {
+  ROOM
+  FULLHOME
+  APARTMENT
+}
+
+enum ReactionType {
+  LIKE
+  LOVE
+  ANGRY
+}
+
+enum FriendshipStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+type Swipes @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Direction: [SwipsDirection]
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  listingsID: ID! @index(name: "byListings")
+  Listings: Listings @belongsTo(fields: ["listingsID"])
+}
+
+type Matches @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Status: [String]!
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  listingsID: ID! @index(name: "byListings")
+  Listings: Listings @belongsTo(fields: ["listingsID"])
+}
+
+type Reviews @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Rating: String
+  Content: String
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  listingsID: ID! @index(name: "byListings")
+  Listings: Listings @belongsTo(fields: ["listingsID"])
+}
+
+type ListingImages @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  ImageURL: String
+  listingsID: ID! @index(name: "byListings")
+  Listings: Listings @belongsTo(fields: ["listingsID"])
+}
+
+type Amenities @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Description: String
+  listingsID: ID! @index(name: "byListings")
+  Listings: Listings @belongsTo(fields: ["listingsID"])
+}
+
+type Listings @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Title: String!
+  Description: String
+  Lat: Float
+  Lng: Float
+  Price: Float
+  Type: [ListingType]
+  AvailabilityStatus: String
+  Address: String
+  MatchPreference: String
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  Amenities: [Amenities] @hasMany(indexName: "byListings", fields: ["id"])
+  ListingImages: [ListingImages] @hasMany(indexName: "byListings", fields: ["id"])
+  Reviews: [Reviews] @hasMany(indexName: "byListings", fields: ["id"])
+  Matches: [Matches] @hasMany(indexName: "byListings", fields: ["id"])
+  Swipes: [Swipes] @hasMany(indexName: "byListings", fields: ["id"])
+}
+
+type GroupMemberships @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  groupsID: ID! @index(name: "byGroups")
+  Groups: Groups @belongsTo(fields: ["groupsID"])
+}
+
+type Groups @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Name: String!
+  Description: String
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  GroupMemberships: [GroupMemberships] @hasMany(indexName: "byGroups", fields: ["id"])
+}
+
+type Messages @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Content: String
+  privatechatsID: ID! @index(name: "byPrivateChats")
+  PrivateChats: PrivateChats @belongsTo(fields: ["privatechatsID"])
+}
+
+type PrivateChats @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  usersID: ID! @index(name: "byUsers")
+  Users: [Users] @manyToMany(relationName: "PrivateChatsUsers")
+  Messages: [Messages] @hasMany(indexName: "byPrivateChats", fields: ["id"])
+}
+
+type Friendships @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Status: [FriendshipStatus]
+  usersID: ID! @index(name: "byUsers")
+  Users: [Users] @manyToMany(relationName: "FriendshipsUsers")
+}
+
+type Reactions @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Type: [ReactionType]
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  postsID: ID! @index(name: "byPosts")
+  Posts: Posts @belongsTo(fields: ["postsID"])
+}
+
+type Comments @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Content: String!
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  postsID: ID! @index(name: "byPosts")
+  Posts: Posts @belongsTo(fields: ["postsID"])
+}
+
+type Posts @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Content: String
+  Image: String
+  usersID: ID! @index(name: "byUsers")
+  Users: Users @belongsTo(fields: ["usersID"])
+  Comments: [Comments] @hasMany(indexName: "byPosts", fields: ["id"])
+  Reactions: [Reactions] @hasMany(indexName: "byPosts", fields: ["id"])
+}
+
+type Users @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  Username: String!
+  Email: String!
+  ProfileImage: String
+  Bio: String
+  Address: String!
+  Posts: [Posts] @hasMany(indexName: "byUsers", fields: ["id"])
+  Comments: [Comments] @hasMany(indexName: "byUsers", fields: ["id"])
+  Reactions: [Reactions] @hasMany(indexName: "byUsers", fields: ["id"])
+  Listings: [Listings] @hasMany(indexName: "byUsers", fields: ["id"])
+  Reviews: [Reviews] @hasMany(indexName: "byUsers", fields: ["id"])
+  Friendships: [Friendships] @hasMany(indexName: "byUsers", fields: ["id"])
+  friendshipss: [Friendships] @manyToMany(relationName: "FriendshipsUsers")
+  Matches: [Matches] @hasMany(indexName: "byUsers", fields: ["id"])
+  Swipes: [Swipes] @hasMany(indexName: "byUsers", fields: ["id"])
+  PrivateChats: [PrivateChats] @hasMany(indexName: "byUsers", fields: ["id"])
+  privatechatss: [PrivateChats] @manyToMany(relationName: "PrivateChatsUsers")
+  Groups: [Groups] @hasMany(indexName: "byUsers", fields: ["id"])
+  lat: Float!
+  lng: Float!
+  Sub: String!
+  FirstName: String
+  LastName: String
+  Hobbies: [Hobbies] @hasMany(indexName: "byUsers", fields: ["id"])
+  hobbiess: [Hobbies] @manyToMany(relationName: "HobbiesUsers")
+}
+ 
