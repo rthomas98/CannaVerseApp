@@ -21,7 +21,8 @@ const styles = StyleSheet.create({
     color: Colors.secondary,
   },
   caption: {
-    fontSize: 14,
+    marginHorizontal: 5,
+    fontSize: 16,
     color: Colors.dark,
   },
 });

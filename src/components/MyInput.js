@@ -31,7 +31,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 45,
     justifyContent: "center",
-    margin: 10,
     fontSize: 18,
     placeholderTextColor: Colors.gray,
     placeholderTextSize: 18,

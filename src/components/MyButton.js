@@ -11,7 +11,7 @@ export default function MyButton({ title, onPress }) {
 
 const styles = StyleSheet.create({
   button: {
-    width: "90%",
+    width: "100%",
     height: 50,
     backgroundColor: Colors.primary,
     padding: 10,
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: Colors.ligth,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
   },
 });
