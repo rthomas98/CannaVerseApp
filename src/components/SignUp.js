@@ -7,7 +7,12 @@ import { AuthContext } from "../context/AuthContext";
 import { Colors } from "../constants/colors";
 
 export default function SignUp() {
-  const { setAuthState, setEmail, setPassword, handleSignUp } =
+  const { setAuthState, setEmail, setPassword, handleSignUp,
+    setFirstName,
+    setLastName,
+    setConfirmPassword,
+  
+  } =
     React.useContext(AuthContext);
   return (
     <React.Fragment>
@@ -18,11 +23,11 @@ export default function SignUp() {
       <MyText type="title">Sign Up</MyText>
       <Text style={{ fontSize: 20, textAlign: 'center', marginBottom: 20, marginTop: 20, marginHorizontal: 20, color: Colors.gray }}>It’s time to find your next room or roommate. Sign up.</Text>
 
-      <MyInput label="First Name"/>
-      <MyInput label="Last Name"/>
+      <MyInput label="First Name" onChangeText={setFirstName} />
+      <MyInput label="Last Name" onChangeText={setLastName} />
       <MyInput label="Email" onChangeText={setEmail} />
       <MyInput label="Password" onChangeText={setPassword} secureTextEntry />
-      <MyInput label="Confirm Password" onChangeText={setPassword} secureTextEntry />
+      <MyInput label="Confirm Password" onChangeText={setConfirmPassword} secureTextEntry />
       <MyButton title="Sign Up" onPress={handleSignUp} />
       <Button 
         title="Go Back" 

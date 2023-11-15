@@ -8,12 +8,21 @@ const AuthContext = React.createContext({
   setEmail: () => {},
   password: "",
   setPassword: () => {},
-  setVerificationCode: () => {},
   verificationCode: "",
+  setVerificationCode: () => {},
   isLoading: false,
+  firstName: "",
+  setLastName: () => {},
+  lastName: "",
+  confirmPassword: "",
+  setConfirmPassword: () => {},
+  setFirstName: () => {},
   handleSignIn: () => {},
   handleSignUp: () => {},
   handleConfirmSignUp: () => {},
+  handleForgotPassword: () => {},
+  handleResetPassword: () => {},
+  handleResendVerificationCode: () => {},
 });
 
 const { Provider } = AuthContext;
@@ -24,10 +33,13 @@ function AuthProvider({ children }) {
   const [password, setPassword] = React.useState("");
   const [verificationCode, setVerificationCode] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(false);
+  const [firstName, setFirstName] = React.useState("");
+  const [lastName, setLastName] = React.useState("");
+  const [confirmPassword, setConfirmPassword] = React.useState("");
 
   async function handleSignIn() {
     if (!email || !password) {
-      alert("Please enter an email and password");
+      alert("please enter an email and password");
       return;
     }
     try {
@@ -36,12 +48,13 @@ function AuthProvider({ children }) {
         username: email,
         password,
       });
-      console.log("user", user);
-      setAuthState("signedIn");
-    } catch (error) {
-      alert(error.message);
       setIsLoading(false);
-      console.log(error);
+      console.log("user signed In");
+      setAuthState("signedIn");
+    } catch (e) {
+      alert(e.message);
+      setIsLoading(false);
+      console.log(e);
     }
   }
 
@@ -50,11 +63,19 @@ function AuthProvider({ children }) {
       alert("Please enter an email and password");
       return;
     }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
     try {
       setIsLoading(true);
       await Auth.signUp({
         username: email,
         password,
+        attributes: {
+          given_name: firstName,
+          family_name: lastName,
+        },
       });
       setAuthState("confirmSignUp");
       setIsLoading(false);
@@ -83,8 +104,7 @@ function AuthProvider({ children }) {
     }
   }
 
-
-  async function handleResetPassWord() {
+  async function handleForgotPassword() {
     if (!email) {
       alert("Please enter an email");
       return;
@@ -92,15 +112,43 @@ function AuthProvider({ children }) {
     try {
       setIsLoading(true);
       await Auth.forgotPassword(email);
-      alert("Password reset email sent");
+      setAuthState("confirmForgotPassword");
       setIsLoading(false);
-    } catch (error) {
+    } catch (e) {
+      alert(e.message);
       setIsLoading(false);
-      alert(error.message);
-      console.log(error);
     }
   }
 
+  async function handleResetPassword() {
+    if (!verificationCode || verificationCode.length !== 6) {
+      alert("Please enter a valid verification code");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      await Auth.forgotPasswordSubmit(email, verificationCode, password);
+      alert("Password reset successfully, Now you can Sign In");
+      setAuthState("signIn");
+      setIsLoading(false);
+    } catch (e) {
+      alert(e.message);
+      setIsLoading(false);
+    }
+  }
+
+  async function handleResendVerificationCode() {
+    try {
+      await Auth.resendSignUp(email);
+      alert(`Successfully resent confirmation code to ${email}`);
+    } catch (e) {
+      alert(e);
+    }
+  }
   return (
     <Provider
       value={{
@@ -116,6 +164,15 @@ function AuthProvider({ children }) {
         verificationCode,
         setVerificationCode,
         isLoading,
+        firstName,
+        setFirstName,
+        lastName,
+        setLastName,
+        confirmPassword,
+        setConfirmPassword,
+        handleForgotPassword,
+        handleResendVerificationCode,
+        handleResetPassword,
       }}
     >
       {children}
