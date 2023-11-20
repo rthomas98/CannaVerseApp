@@ -5,6 +5,15 @@ import { Auth } from "aws-amplify";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Home({ navigation }) {
+
+  React.useEffect(() => {
+    async function checkFirstLaunch() {
+      const firstLaunch = await AsyncStorage.getItem("@firstLaunch");
+      if (firstLaunch === null) navigation.navigate("Onboarding");
+    }
+    checkFirstLaunch();
+  }, []);
+
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
@@ -30,9 +39,7 @@ export default function Home({ navigation }) {
   return (
     <React.Fragment>
       <MyText type="title">Welcome back! 🚀</MyText>
-      <MyText>{user?.sub}</MyText>
       <MyText>{user?.email}</MyText>
-      <MyButton onPress={() => navigation.navigate("Discover")} title="Discover" />
       <MyButton title={"Sign Out"} onPress={handleSignOut} />
     </React.Fragment>
   );

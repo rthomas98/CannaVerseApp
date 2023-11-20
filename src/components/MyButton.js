@@ -25,4 +25,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
   },
+  outlinedButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: Colors.ligth,
+    padding: 10,
+    margin: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: Colors.primary,
+  },
+  outlinedButtonText: {
+    color: Colors.primary,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 });

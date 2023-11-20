@@ -3,6 +3,7 @@ import MyInput from "./MyInput";
 import MyButton from "./MyButton";
 import MyText from "./MyText";
 import { AuthContext } from "../context/AuthContext";
+import { StyleSheet } from "react-native";
 
 export default function DefaultAuth() {
  const { setAuthState } = React.useContext(AuthContext);
@@ -20,9 +21,10 @@ export default function DefaultAuth() {
      />
      <MyText
        type="caption"
-       style={{ textAlign: "center", marginVertical: 12 }}
+       style={StyleSheet.outlinedButton}
      >
        -Or-
+       
      </MyText>
      <MyButton
        title="Sign In With Google"
